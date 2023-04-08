@@ -16,11 +16,23 @@ class MainFrame(Tk):
         self.title('Главная рабочая область')
         self.geometry('1800x900')
 
-        self._print_new_layer()
+        # добавляет новый слой
+        self._make_add_layer_button()
+
+        # проходится по всем слоям
+        self._make_train_button()
 
     def _print_new_layer(self):
-        new_layer = LayerWidget(root_widget=self, name_layer='Linear')
+        new_layer = LayerWidget(root_widget=self, name_layer='ReLU')
         new_layer.pack()
+
+    def _make_train_button(self):
+        train_button = ttk.Button(text='TRAIN')
+        train_button.pack(anchor='nw')
+
+    def _make_add_layer_button(self):
+        train_button = ttk.Button(text='add layer')
+        train_button.pack()
 
     def start(self):
         self.mainloop()
@@ -28,7 +40,7 @@ class MainFrame(Tk):
 
 class LayerWidget:
     """
-    Графическое отображение виджета для абстрактного слоя
+    Графическое отображение виджета для абстрактного слоя в виде рамки на главном окне
     """
 
     def __init__(self, root_widget, name_layer):
