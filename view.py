@@ -75,7 +75,7 @@ class LayerWidget:
 
     def move_window(self, event):
         """
-        Двигает виджет слоя
+        Двигает виджет слоя(рамку и надпись)
         """
 
         self.root.update_idletasks()
