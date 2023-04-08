@@ -4,8 +4,7 @@ from tkinter import ttk
 
 class MainFrame(Tk):
     """
-    Главная рабочая область, где можно
-    добавлять слои
+    Представление. То, что видит пользователь. Главная рабочая область
     """
 
     def __init__(self, controller):
@@ -16,14 +15,12 @@ class MainFrame(Tk):
         self.title('Главная рабочая область')
         self.geometry('1800x900')
 
-        # добавляет новый слой
+        # добавляем основные кнопки
         self._make_add_layer_button()
-
-        # проходится по всем слоям
         self._make_train_button()
 
-    def _print_new_layer(self):
-        new_layer = LayerWidget(root_widget=self, name_layer='ReLU')
+    def _print_new_layer(self, name_layer):
+        new_layer = LayerWidget(root_widget=self, name_layer=str(name_layer))
         new_layer.pack()
 
     def _make_train_button(self):
@@ -31,7 +28,7 @@ class MainFrame(Tk):
         train_button.pack(anchor='nw')
 
     def _make_add_layer_button(self):
-        train_button = ttk.Button(text='add layer')
+        train_button = ttk.Button(text='add layer', command=self.controller.on_add_layer_button_click)
         train_button.pack()
 
     def start(self):
@@ -46,7 +43,7 @@ class LayerWidget:
     def __init__(self, root_widget, name_layer):
         super().__init__()
 
-        self.root = root_widget    # нужно знать класс, где отображать виджет
+        self.root = root_widget  # нужно знать класс, где отображать виджет
 
         # начальное позиционирование виджета
         self.__winX = 300
