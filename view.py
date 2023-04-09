@@ -49,7 +49,11 @@ class NetworkView(ttk.Frame):
         self._make_add_layer_button()
         self._make_train_button()
 
-    def _print_new_layer(self, name_layer):
+    def print_new_layer(self, name_layer):
+        """
+        :param name_layer: имя слоя для отображения
+        """
+
         new_layer = LayerWidgetView(root_widget=self, name_layer=str(name_layer))
         new_layer.pack()
 

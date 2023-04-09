@@ -13,7 +13,7 @@ class Controller:
 
     def on_add_layer_button_click(self):
         res = self.model.create_layer()
-        self.view.network_view._print_new_layer(res)
+        self.view.network_view.print_new_layer(res)
 
     def main(self):
         self.view.main()  # отображаем главное окно
