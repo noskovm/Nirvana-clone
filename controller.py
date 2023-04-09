@@ -1,5 +1,5 @@
 from model import Model
-from view import MainFrame
+from view import View
 
 
 class Controller:
@@ -9,14 +9,14 @@ class Controller:
 
     def __init__(self):
         self.model = Model()
-        self.view = MainFrame(self)
+        self.view = View(self)
 
     def on_add_layer_button_click(self):
         res = self.model.create_layer()
-        self.view._print_new_layer(res)
+        self.view.network_view._print_new_layer(res)
 
     def main(self):
-        self.view.start()  # отображаем главное окно
+        self.view.main()  # отображаем главное окно
 
 
 if __name__ == '__main__':

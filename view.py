@@ -2,9 +2,12 @@ from tkinter import *
 from tkinter import ttk
 
 
-class MainFrame(Tk):
+class View(Tk):
     """
-    Представление. То, что видит пользователь. Главная рабочая область
+    Представление. Содержит 4 вкладки для разных этапов задачи
+    Загрузка данных, построение модели, перебор гиперпараметров, оценка качества
+    _______________________________________________________
+    DATA | NETWORK | HYPERPARAMETERS | TEST
     """
 
     def __init__(self, controller):
@@ -15,27 +18,47 @@ class MainFrame(Tk):
         self.title('Главная рабочая область')
         self.geometry('1800x900')
 
-        # добавляем основные кнопки
+        # вкладки
+        self.tub = ttk.Notebook(self)
+        self.data_view = DataView(container=self.tub)
+        self.network_view = NetworkView(container=self.tub, controller=self.controller)
+
+        self.tub.add(self.data_view, text='DATA')
+        self.tub.add(self.network_view, text='NETWORK')
+
+        self.tub.pack(expand=True, fill=BOTH)
+
+    def main(self):
+        self.mainloop()
+
+
+class NetworkView(ttk.Frame):
+    """
+    То, что видит пользователь. Главная рабочая область
+    """
+
+    def __init__(self, container, controller):
+        super().__init__()
+        self.controller = controller
+
+        # отрисовка главных кнопок
         self._make_add_layer_button()
         self._make_train_button()
 
     def _print_new_layer(self, name_layer):
-        new_layer = LayerWidget(root_widget=self, name_layer=str(name_layer))
+        new_layer = LayerWidgetView(root_widget=self, name_layer=str(name_layer))
         new_layer.pack()
 
     def _make_train_button(self):
-        train_button = ttk.Button(text='TRAIN')
+        train_button = ttk.Button(self, text='TRAIN')
         train_button.pack(anchor='nw')
 
     def _make_add_layer_button(self):
-        train_button = ttk.Button(text='add layer', command=self.controller.on_add_layer_button_click)
+        train_button = ttk.Button(self, text='add layer', command=self.controller.on_add_layer_button_click)
         train_button.pack()
 
-    def start(self):
-        self.mainloop()
 
-
-class LayerWidget:
+class LayerWidgetView:
     """
     Графическое отображение виджета для абстрактного слоя в виде рамки на главном окне
     """
@@ -99,3 +122,13 @@ class LayerWidget:
 
         # запоминаем последние координаты
         self.f.place_configure(x=self.__winX, y=self.__winY)
+
+
+class DataView(ttk.Frame):
+    """
+    Вкладка загрузки данных.
+    """
+
+    def __init__(self, container):
+        super().__init__()
+        pass
