@@ -7,7 +7,7 @@ class View(Tk):
     Представление. Содержит 4 вкладки для разных этапов задачи
     Загрузка данных, построение модели, перебор гиперпараметров, оценка качества
     _______________________________________________________
-    DATA | NETWORK | HYPERPARAMETERS | TEST
+    DATA | NETWORK | HYPERPARAMETERS | VALIDATION
     """
 
     def __init__(self, controller):
@@ -18,13 +18,17 @@ class View(Tk):
         self.title('Главная рабочая область')
         self.geometry('1800x900')
 
-        # вкладки
+        # инициализация и упаковка вкладок
         self.tub = ttk.Notebook(self)
         self.data_view = DataView(container=self.tub)
         self.network_view = NetworkView(container=self.tub, controller=self.controller)
+        self.hyper_view = HyperView(container=self.tub)
+        self.validation_view = ValidationView(container=self.tub)
 
         self.tub.add(self.data_view, text='DATA')
         self.tub.add(self.network_view, text='NETWORK')
+        self.tub.add(self.hyper_view, text='HYPERPARAMETERS')
+        self.tub.add(self.validation_view, text='VALIDATION')
 
         self.tub.pack(expand=True, fill=BOTH)
 
@@ -34,7 +38,7 @@ class View(Tk):
 
 class NetworkView(ttk.Frame):
     """
-    То, что видит пользователь. Главная рабочая область
+    Вкладка построения графа вычислений(нейронной сети).
     """
 
     def __init__(self, container, controller):
@@ -58,9 +62,39 @@ class NetworkView(ttk.Frame):
         train_button.pack()
 
 
+class DataView(ttk.Frame):
+    """
+    Вкладка загрузки данных.
+    """
+
+    def __init__(self, container):
+        super().__init__()
+        pass
+
+
+class HyperView(ttk.Frame):
+    """
+    Вкладка подбора гиперпараметров.
+    """
+
+    def __init__(self, container):
+        super().__init__()
+        pass
+
+
+class ValidationView(ttk.Frame):
+    """
+    Вкладка оценки качества модели.
+    """
+
+    def __init__(self, container):
+        super().__init__()
+        pass
+
+
 class LayerWidgetView:
     """
-    Графическое отображение виджета для абстрактного слоя в виде рамки на главном окне
+    Графическое отображение виджета для любого слоя в виде рамки на главном окне
     """
 
     def __init__(self, root_widget, name_layer):
@@ -122,13 +156,3 @@ class LayerWidgetView:
 
         # запоминаем последние координаты
         self.f.place_configure(x=self.__winX, y=self.__winY)
-
-
-class DataView(ttk.Frame):
-    """
-    Вкладка загрузки данных.
-    """
-
-    def __init__(self, container):
-        super().__init__()
-        pass
