@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+import sv_ttk
 
 
 class View(Tk):
@@ -15,11 +16,23 @@ class View(Tk):
         self.controller = controller
 
         # конфигурация окна
+        sv_ttk.set_theme("light")
         self.title('Главная рабочая область')
         self.geometry('1800x900')
 
         # инициализация и упаковка вкладок
         self.tub = ttk.Notebook(self)
+
+        # некоторые беды со стилем(чтобы убрать пунктир)
+        style = ttk.Style()
+        style.layout("Tab",
+                     [('Notebook.tab', {'sticky': 'nswe', 'children':
+                      [('Notebook.padding', {'side': 'top', 'sticky': 'nswe', 'children':
+                       [('Notebook.label', {'side': 'top', 'sticky': ''})],
+                                             })],
+                                        })]
+                     )
+
         self.data_view = DataView(container=self.tub)
         self.network_view = NetworkView(container=self.tub, controller=self.controller)
         self.hyper_view = HyperView(container=self.tub)
@@ -54,7 +67,7 @@ class NetworkView(ttk.Frame):
         :param name_layer: имя слоя для отображения
         """
 
-        new_layer = LayerWidgetView(root_widget=self, name_layer=str(name_layer))
+        new_layer = LayerWidgetView(container=self, name_layer=str(name_layer))
         new_layer.pack()
 
     def _make_train_button(self):
@@ -101,30 +114,15 @@ class LayerWidgetView:
     Графическое отображение виджета для любого слоя в виде рамки на главном окне
     """
 
-    def __init__(self, root_widget, name_layer):
+    def __init__(self, container, name_layer):
         super().__init__()
 
-        self.root = root_widget  # нужно знать класс, где отображать виджет
-
-        # начальное позиционирование виджета
-        self.__winX = 300
-        self.__winY = 300
-
-        # запоминаем последние координаты для реализации движения
-        self.__lastX = 0
-        self.__lastY = 0
+        self.frame = ttk.Frame(container, relief=RAISED, border=1)
 
         # виджет-рамка отображает все параметры слоя(размер входа, выхода; гиперпараметры)
-        self.f = Frame(root_widget, bd=1, relief=SUNKEN)
 
         # виджет-надпись отображает имя слоя
-        self.lab = Label(self.f, bd=1, relief=RAISED, text=name_layer)
-
-        # отслеживание движения
-        self.lab.bind('<ButtonPress-1>', self.start_move_window)
-        self.lab.bind('<B1-Motion>', self.move_window)
-        self.f.bind('<ButtonPress-1>', self.start_move_window)
-        self.f.bind('<B1-Motion>', self.move_window)
+        self.lab = ttk.Label(self.frame, relief=RAISED, text=name_layer)
 
     def pack(self):
         """
@@ -132,31 +130,5 @@ class LayerWidgetView:
         этот метод из главного окна и друг за другом выстраивать слои
         """
 
-        self.f.place(x=self.__winX, y=self.__winY, width=200, height=200)
+        self.frame.place(x=300, y=300, width=200, height=200)
         self.lab.pack(fill=X, padx=1, pady=1)
-
-    def start_move_window(self, event):
-        """
-        Отлавливает момент фокуса мышки на виджете
-        """
-
-        self.__lastX = event.x_root
-        self.__lastY = event.y_root
-
-    def move_window(self, event):
-        """
-        Двигает виджет слоя(рамку и надпись)
-        """
-
-        self.root.update_idletasks()
-
-        # использование координат главного окна для вычисления смещения для внутренних координат виджета
-        self.__winX += event.x_root - self.__lastX
-        self.__winY += event.y_root - self.__lastY
-
-        # запоминаем последние координаты
-        self.__lastX = event.x_root
-        self.__lastY = event.y_root
-
-        # запоминаем последние координаты
-        self.f.place_configure(x=self.__winX, y=self.__winY)
