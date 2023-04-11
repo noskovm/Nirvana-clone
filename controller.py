@@ -12,11 +12,11 @@ class Controller:
         self.view = View(self)
 
     def on_add_linear_button_click(self):
-        res = self.model.create_layer('linear')
+        res = self.model.add_layer('linear')
         self.view.network_view.print_new_layer(res)
 
-    def on_add_ReLU_button_click(self):
-        res = self.model.create_layer('relu')
+    def on_add_relu_button_click(self):
+        res = self.model.add_layer('relu')
         self.view.network_view.print_new_layer(res)
 
     def main(self):

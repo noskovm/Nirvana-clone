@@ -59,16 +59,16 @@ class NetworkView(ttk.Frame):
     """
 
     def __init__(self, master, controller):
-        super().__init__(master)
+        super().__init__()
         self.controller = controller
 
-        # установка фрейма для кнопок-слоев
+        # установка верхнего фрейма для кнопок-слоев
         self.layers_buttons_frame = ttk.Frame(self, height=60, padding=[8, 8])
         self.layers_buttons_frame.pack(anchor=N, fill=X)
 
-        # отрисовка кнопок-слоев
+        # отрисовка кнопок-слоев в верхнем фрейме
         self._make_add_linear_button()
-        self._make_add_ReLU_button()
+        self._make_add_relu_button()
 
     def print_new_layer(self, name_layer):
         new_layer = LayerWidgetView(master=self, name_layer=str(name_layer))
@@ -79,11 +79,10 @@ class NetworkView(ttk.Frame):
                                    command=self.controller.on_add_linear_button_click)
         linear_button.pack(side=LEFT)
 
-    def _make_add_ReLU_button(self):
+    def _make_add_relu_button(self):
         linear_button = ttk.Button(self.layers_buttons_frame, text='ReLU',
-                                   command=self.controller.on_add_ReLU_button_click)
+                                   command=self.controller.on_add_relu_button_click)
         linear_button.pack(side=LEFT, padx=5)
-
 
 
 class DataView(ttk.Frame):
@@ -92,7 +91,7 @@ class DataView(ttk.Frame):
     """
 
     def __init__(self, master):
-        super().__init__(master)
+        super().__init__()
         pass
 
 
@@ -102,7 +101,7 @@ class HyperView(ttk.Frame):
     """
 
     def __init__(self, master):
-        super().__init__(master)
+        super().__init__()
         pass
 
 
@@ -112,22 +111,23 @@ class ValidationView(ttk.Frame):
     """
 
     def __init__(self, master):
-        super().__init__(master)
+        super().__init__()
         pass
 
 
-class LayerWidgetView(ttk.Frame):
+class LayerWidgetView:
     """
     Графическое отображение виджета для любого слоя в виде рамки на главном окне
     """
 
     def __init__(self, master, name_layer):
-        super().__init__(master)
+        super().__init__()
 
-        self.config(relief=RAISED, border=1)
+        self.layer_frame = ttk.Frame(master, relief=RAISED, border=1, width=100, height=100)
 
         # виджет-надпись отображает имя слоя
-        self.lab = ttk.Label(self, relief=RAISED, text=name_layer)
+        self.text_layer = ttk.Label(self.layer_frame, relief=RAISED, text=name_layer)
+        self.in_features_entry = ttk.Entry(self.layer_frame, width=2)
 
     def pack(self):
         """
@@ -135,5 +135,6 @@ class LayerWidgetView(ttk.Frame):
         этот метод из главного окна и друг за другом выстраивать слои
         """
 
-        self.place(x=300, y=300, width=200, height=200)
-        self.lab.pack(fill=X, padx=1, pady=1)
+        self.layer_frame.pack(anchor=W)
+        self.text_layer.pack(fill=X, padx=1, pady=1)
+        self.in_features_entry.pack(anchor=S)

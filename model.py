@@ -7,10 +7,17 @@ class Model:
     """
 
     def __init__(self):
-        pass
+        """
+        layers_list на этапе формирования каркаса сети(без параметров) мы должны только запоминать
+            последовательность слоев
+        """
+        self.layers_list = []
 
-    def create_layer(self, name_layer):
-        layers_from_pytorch = {'relu': LayerReLU()}
-        new_layer = layers_from_pytorch[name_layer]
-        print(new_layer)
-        return new_layer
+    def add_layer(self, name_layer):
+        """
+        :param name_layer: имя слоя, ключ, по которому можно достать соотвествующий слой из pytorch
+        :return: экземпляр класса pytorch name_layer
+        """
+        # словарь соответсвия между name_layer и таким же слоем из pytorch
+        self.layers_list.append(name_layer)
+        return name_layer
