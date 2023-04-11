@@ -9,6 +9,8 @@ class Model:
     def __init__(self):
         pass
 
-    def create_layer(self):
-        new_layer = LayerReLU()
+    def create_layer(self, name_layer):
+        layers_from_pytorch = {'relu': LayerReLU()}
+        new_layer = layers_from_pytorch[name_layer]
+        print(new_layer)
         return new_layer
