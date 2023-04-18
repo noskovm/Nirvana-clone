@@ -13,3 +13,9 @@ class LayerReLU:
     def __init__(self):
         self.layer = torch.nn.ReLU()
 
+
+class LayersSequence:
+
+    def __init__(self):
+        self.layer = torch.nn.Sequential()
+

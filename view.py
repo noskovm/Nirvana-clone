@@ -81,7 +81,15 @@ class NetworkView(ttk.Frame):
         self.layers_frame.rowconfigure(index=self.row, weight=1)
         self.layers_frame.columnconfigure(index=self.col, weight=1)
 
-    def print_new_layer(self, name_layer):
+        # установка нижнего фрейма для кнопки сохранения модели
+        self.save_model_button_frame = ttk.Frame(self, height=60, padding=[8, 8], border=1, relief=RAISED)
+        self.save_model_button_frame.pack(anchor=S, fill=X, expand=True)
+        self.save_model_button_frame.pack_propagate(False)
+
+        # отрисовка кнопки сохранения
+        self._make_save_model_button()
+
+    def print_and_save_new_layer(self, name_layer):
         """
         Здесь сохраняем представление слоя в модели, чтобы потом можно было брать метаинфу(параметры, например)
         """
@@ -95,10 +103,6 @@ class NetworkView(ttk.Frame):
         self.layers_frame.columnconfigure(index=self.col, weight=1)  # переопределяем количество столбцов
 
     def _make_add_linear_button(self):
-        """
-        Здесь даем команду только на отрисовку
-        """
-
         linear_button = ttk.Button(self.layers_buttons_frame, text='Linear',
                                    command=lambda: self.controller.print_layer('linear'))
         linear_button.pack(side=LEFT)
@@ -107,6 +111,11 @@ class NetworkView(ttk.Frame):
         linear_button = ttk.Button(self.layers_buttons_frame, text='ReLU',
                                    command=lambda: self.controller.print_layer('relu'))
         linear_button.pack(side=LEFT, padx=5)
+
+    def _make_save_model_button(self):
+        save_model_button = ttk.Button(self.save_model_button_frame, text='SAVE',
+                                       command=self.controller.save_model)
+        save_model_button.pack(anchor=E)
 
 
 class DataView(ttk.Frame):
@@ -208,3 +217,18 @@ class LayerWidgetView:
 
         # outer pack
         self._make_layers_features()
+
+    def get_all_parameters(self, name_layer):
+        match name_layer:
+            case 'linear':
+                parameters = dict()
+                parameters['name_layer'] = 'linear'
+                parameters['in_features'] = self.in_features_entry.get()
+                parameters['out_features'] = self.out_features_entry.get()
+                return parameters
+
+            case 'relu':
+                parameters = dict()
+                parameters['name_layer'] = 'relu'
+                return parameters
+

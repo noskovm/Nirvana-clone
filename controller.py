@@ -16,7 +16,7 @@ class Controller:
         Только отрисовка слоя с именем
         """
 
-        self.view.network_view.print_new_layer(name_layer)
+        self.view.network_view.print_and_save_new_layer(name_layer)
 
     def add_layer(self, layer_meta_view):
         """
@@ -24,6 +24,9 @@ class Controller:
         """
 
         self.model.add_layer(layer_meta_view)
+
+    def save_model(self):
+        self.model.save_model()
 
     def main(self):
         self.view.main()  # отображаем главное окно
