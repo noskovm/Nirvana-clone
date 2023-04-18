@@ -72,7 +72,7 @@ class NetworkView(ttk.Frame):
         self._make_add_relu_button()
 
         # установка фрейма для слоев
-        self.layers_frame = ttk.Frame(self, height=200, width=200, relief=RAISED, border=1)
+        self.layers_frame = ttk.Frame(self, height=200, width=200)
         self.layers_frame.pack(anchor=N, padx=20, pady=100)
 
         # сетка для слоев
@@ -83,9 +83,9 @@ class NetworkView(ttk.Frame):
 
     def print_new_layer(self, name_layer):
         new_layer = LayerWidgetView(master=self.layers_frame, name_layer=str(name_layer))
-        new_layer.pack_widget(col=self.col)     # слой помещается в текущий столбец
-        self.col += 1       # теперь столбцов нужно больше
-        self.layers_frame.columnconfigure(index=self.col, weight=1)     # переопределяем количество столбцов
+        new_layer.pack_widget(col=self.col)  # слой помещается в текущий столбец
+        self.col += 1  # теперь столбцов нужно больше
+        self.layers_frame.columnconfigure(index=self.col, weight=1)  # переопределяем количество столбцов
 
     def _make_add_linear_button(self):
         linear_button = ttk.Button(self.layers_buttons_frame, text='Linear',
@@ -135,21 +135,65 @@ class LayerWidgetView:
 
     def __init__(self, master, name_layer):
         super().__init__()
+        # понадобится для определения какие параметры слоя показывать
+        self.name_layer = name_layer
 
-        # рамка слоя, мастер для всех внутренних компонентов
-        self.layer_frame = ttk.Frame(master, relief=RAISED, border=1, width=150, height=200)
+        # главная рамка
+        self.main_layer_frame = ttk.Frame(master, width=150, height=235)
+
+        # все параметры и кнопки(внутрення рамка, все кнопки кроме параметров in_features и out_features)
+        self.inner_layer_frame = ttk.Frame(self.main_layer_frame, relief=RAISED, border=1, width=150, height=170)
+
+        # фрейм для отрисовки параметров конкретного слоя
+        self.outer_layer_frame = ttk.Frame(self.main_layer_frame, width=150, height=170)
 
         # виджет-надпись отображает имя слоя
-        self.text_layer = ttk.Label(self.layer_frame, relief=RAISED, text=name_layer, background='gray90')
+        self.text_layer = ttk.Label(self.inner_layer_frame, relief=RAISED, text=name_layer, background='gray90')
+
+    def _make_layers_features(self):
+        """
+        У каждого слоя свой набор редактируемых параметров, например у линейного это in_features, out_features.
+        Эта функция сопоставляет какие параметры нужно отрисовать исходя из имени слоя
+        """
+
+        match self.name_layer:
+            case 'linear':
+
+                # создаем сетку 4x4(так просто красивее выглядит) для размещения двух параметров в фрейме
+                for row in range(4):
+                    for col in range(4):
+                        self.outer_layer_frame.rowconfigure(index=row, weight=1)
+                        self.outer_layer_frame.columnconfigure(index=col, weight=1)
+
+                # in_features, out_features labels
+                self.text_in_features = ttk.Label(self.outer_layer_frame, text='IN')
+                self.text_out_features = ttk.Label(self.outer_layer_frame, text='OUT')
+
+                # in_features, out_features entries
+                self.in_features_entry = ttk.Entry(self.outer_layer_frame, width=4)
+                self.out_features_entry = ttk.Entry(self.outer_layer_frame, width=4)
+
+                # in_features, out_features grid
+                self.text_in_features.grid(row=0, column=0, sticky=W, pady=1)
+                self.text_out_features.grid(row=1, column=0, sticky=W, pady=1)
+                self.in_features_entry.grid(row=0, column=1, sticky=W, pady=1)
+                self.out_features_entry.grid(row=1, column=1, sticky=W, pady=1)
 
     def pack_widget(self, col):
         """
-        Располагает виджет. Полезно, потому что можно передавать координаты в
-        этот метод из главного окна и друг за другом выстраивать слои
+        Располагает виджет слоя в сетке слоев
         """
 
-        self.layer_frame.grid(row=0, column=col, padx=20)
+        # упаковка фреймов
+        self.main_layer_frame.grid(row=0, column=col, padx=20)
+        self.main_layer_frame.pack_propagate(False)
+        self.inner_layer_frame.pack(fill=X, pady=5)
+        self.inner_layer_frame.pack_propagate(False)
+        self.outer_layer_frame.pack(fill=X)
+        self.outer_layer_frame.pack_propagate(False)
 
-        self.layer_frame.pack_propagate(False)
-
+        # inner pack
         self.text_layer.pack(fill=X, padx=1, pady=1)
+
+        # outer pack
+        self._make_layers_features()
