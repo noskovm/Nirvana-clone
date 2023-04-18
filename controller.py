@@ -20,7 +20,7 @@ class Controller:
 
     def add_layer(self, layer_meta_view):
         """
-        Добавляет экзепляр представления слоя
+        Добавляет экземпляр представления слоя
         """
 
         self.model.add_layer(layer_meta_view)

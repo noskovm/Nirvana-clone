@@ -222,13 +222,10 @@ class LayerWidgetView:
         match name_layer:
             case 'linear':
                 parameters = dict()
-                parameters['name_layer'] = 'linear'
-                parameters['in_features'] = self.in_features_entry.get()
-                parameters['out_features'] = self.out_features_entry.get()
+                parameters['in_features'] = int(self.in_features_entry.get())
+                parameters['out_features'] = int(self.out_features_entry.get())
                 return parameters
 
             case 'relu':
-                parameters = dict()
-                parameters['name_layer'] = 'relu'
-                return parameters
+                return None
 

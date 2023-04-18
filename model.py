@@ -1,4 +1,5 @@
 from layers import *
+import torch.nn as nn
 
 
 class Model:
@@ -12,8 +13,9 @@ class Model:
         """
 
         self.layers_list = []
-        self.layers_sequence = LayersSequence()
-        self.layers_link = {'linear': LayerLinear}
+        self.neural_network = nn.Sequential()
+        self.layers_link = {'linear': make_linear_layer,
+                            'relu': make_relu_layer}
 
     def add_layer(self, name_layer):
         """
@@ -27,8 +29,22 @@ class Model:
         """
         Проходится по каждому слою из представления, забирает все параметры и формирует torch.sequence
         """
+        self.neural_network = nn.Sequential()  # при каждом нажатии на сохранение он заново все просчитывает
 
         for layer in self.layers_list:
+
+            # словарь параметров для инициализации слоя
             current_parameters = layer.get_all_parameters(layer.name_layer)
-            for name_param, value_param in current_parameters.items():
-                print(name_param, value_param)
+
+            # с помощью имени знаем какую функцию вызывать для создания слоя
+            name_layer = layer.name_layer
+
+            if current_parameters:
+                new_layer = self.layers_link[name_layer](current_parameters)
+                self.neural_network.append(new_layer)
+            else:
+                new_layer = self.layers_link[name_layer]()
+                self.neural_network.append(new_layer)
+
+        for name, param in self.neural_network.named_parameters():
+            print(name, param.shape)
