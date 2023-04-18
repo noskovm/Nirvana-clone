@@ -65,14 +65,27 @@ class NetworkView(ttk.Frame):
         # установка верхнего фрейма для кнопок-слоев
         self.layers_buttons_frame = ttk.Frame(self, height=60, padding=[8, 8])
         self.layers_buttons_frame.pack(anchor=N, fill=X)
+        self.layers_buttons_frame.pack_propagate(False)
 
         # отрисовка кнопок-слоев в верхнем фрейме
         self._make_add_linear_button()
         self._make_add_relu_button()
 
+        # установка фрейма для слоев
+        self.layers_frame = ttk.Frame(self, height=200, width=200, relief=RAISED, border=1)
+        self.layers_frame.pack(anchor=N, padx=20, pady=100)
+
+        # сетка для слоев
+        self.row = 0
+        self.col = 0
+        self.layers_frame.rowconfigure(index=self.row, weight=1)
+        self.layers_frame.columnconfigure(index=self.col, weight=1)
+
     def print_new_layer(self, name_layer):
-        new_layer = LayerWidgetView(master=self, name_layer=str(name_layer))
-        new_layer.pack()
+        new_layer = LayerWidgetView(master=self.layers_frame, name_layer=str(name_layer))
+        new_layer.pack_widget(col=self.col)     # слой помещается в текущий столбец
+        self.col += 1       # теперь столбцов нужно больше
+        self.layers_frame.columnconfigure(index=self.col, weight=1)     # переопределяем количество столбцов
 
     def _make_add_linear_button(self):
         linear_button = ttk.Button(self.layers_buttons_frame, text='Linear',
@@ -123,18 +136,20 @@ class LayerWidgetView:
     def __init__(self, master, name_layer):
         super().__init__()
 
-        self.layer_frame = ttk.Frame(master, relief=RAISED, border=1, width=100, height=100)
+        # рамка слоя, мастер для всех внутренних компонентов
+        self.layer_frame = ttk.Frame(master, relief=RAISED, border=1, width=150, height=200)
 
         # виджет-надпись отображает имя слоя
-        self.text_layer = ttk.Label(self.layer_frame, relief=RAISED, text=name_layer)
-        self.in_features_entry = ttk.Entry(self.layer_frame, width=2)
+        self.text_layer = ttk.Label(self.layer_frame, relief=RAISED, text=name_layer, background='gray90')
 
-    def pack(self):
+    def pack_widget(self, col):
         """
         Располагает виджет. Полезно, потому что можно передавать координаты в
         этот метод из главного окна и друг за другом выстраивать слои
         """
 
-        self.layer_frame.pack(anchor=W)
+        self.layer_frame.grid(row=0, column=col, padx=20)
+
+        self.layer_frame.pack_propagate(False)
+
         self.text_layer.pack(fill=X, padx=1, pady=1)
-        self.in_features_entry.pack(anchor=S)
