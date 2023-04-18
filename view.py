@@ -82,19 +82,30 @@ class NetworkView(ttk.Frame):
         self.layers_frame.columnconfigure(index=self.col, weight=1)
 
     def print_new_layer(self, name_layer):
+        """
+        Здесь сохраняем представление слоя в модели, чтобы потом можно было брать метаинфу(параметры, например)
+        """
+
         new_layer = LayerWidgetView(master=self.layers_frame, name_layer=str(name_layer))
+
+        self.controller.add_layer(new_layer)    # благодаря этому можно передавать в torch параметры слоя
+
         new_layer.pack_widget(col=self.col)  # слой помещается в текущий столбец
         self.col += 1  # теперь столбцов нужно больше
         self.layers_frame.columnconfigure(index=self.col, weight=1)  # переопределяем количество столбцов
 
     def _make_add_linear_button(self):
+        """
+        Здесь даем команду только на отрисовку
+        """
+
         linear_button = ttk.Button(self.layers_buttons_frame, text='Linear',
-                                   command=self.controller.on_add_linear_button_click)
+                                   command=lambda: self.controller.print_layer('linear'))
         linear_button.pack(side=LEFT)
 
     def _make_add_relu_button(self):
         linear_button = ttk.Button(self.layers_buttons_frame, text='ReLU',
-                                   command=self.controller.on_add_relu_button_click)
+                                   command=lambda: self.controller.print_layer('relu'))
         linear_button.pack(side=LEFT, padx=5)
 
 

@@ -11,7 +11,11 @@ class Model:
         layers_list на этапе формирования каркаса сети(без параметров) мы должны только запоминать
             последовательность слоев
         """
+
         self.layers_list = []
+
+
+
 
     def add_layer(self, name_layer):
         """
@@ -20,4 +24,4 @@ class Model:
         """
         # словарь соответсвия между name_layer и таким же слоем из pytorch
         self.layers_list.append(name_layer)
-        return name_layer
+        print(self.layers_list)

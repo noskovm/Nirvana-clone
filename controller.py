@@ -11,13 +11,19 @@ class Controller:
         self.model = Model()
         self.view = View(self)
 
-    def on_add_linear_button_click(self):
-        res = self.model.add_layer('linear')
-        self.view.network_view.print_new_layer(res)
+    def print_layer(self, name_layer):
+        """
+        Только отрисовка слоя с именем
+        """
 
-    def on_add_relu_button_click(self):
-        res = self.model.add_layer('relu')
-        self.view.network_view.print_new_layer(res)
+        self.view.network_view.print_new_layer(name_layer)
+
+    def add_layer(self, layer_meta_view):
+        """
+        Добавляет экзепляр представления слоя
+        """
+
+        self.model.add_layer(layer_meta_view)
 
     def main(self):
         self.view.main()  # отображаем главное окно
