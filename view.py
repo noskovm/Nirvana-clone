@@ -70,6 +70,7 @@ class NetworkView(ttk.Frame):
         # отрисовка кнопок-слоев в верхнем фрейме
         self._make_add_linear_button()
         self._make_add_relu_button()
+        self._make_add_conv2d_button()
 
         # установка фрейма для слоев
         self.layers_frame = ttk.Frame(self, height=200, width=200)
@@ -112,10 +113,25 @@ class NetworkView(ttk.Frame):
                                    command=lambda: self.controller.print_layer('relu'))
         linear_button.pack(side=LEFT, padx=5)
 
+    def _make_add_conv2d_button(self):
+        conv2d_button = ttk.Button(self.layers_buttons_frame, text='Conv2d',
+                                   command=lambda: self.controller.print_layer('Conv2d'))
+        conv2d_button.pack(side=LEFT, padx=5)
+
     def _make_save_model_button(self):
         save_model_button = ttk.Button(self.save_model_button_frame, text='SAVE',
                                        command=self.controller.save_model)
         save_model_button.pack(anchor=E)
+
+    # todo для каждой кнопки
+    # сделать функцию отрисовки make
+    # в layer_widget сделать _make_features
+    # в layer_widget сделать get_all_parameters
+    # в model прописать в словарь
+    # в layers написать функцию
+
+    # todo решить проблему с непропорциональностью отображения параметров в слое
+
 
 
 class DataView(ttk.Frame):
@@ -193,12 +209,44 @@ class LayerWidgetView:
                 self.in_features_entry = ttk.Entry(self.outer_layer_frame, width=4)
                 self.out_features_entry = ttk.Entry(self.outer_layer_frame, width=4)
 
-                # in_features, out_features grid
+                # param labels pack
                 self.text_in_features.grid(row=0, column=0, sticky=W, pady=1)
                 self.text_out_features.grid(row=1, column=0, sticky=W, pady=1)
+
+                # param entries pack
                 self.in_features_entry.grid(row=0, column=1, sticky=W, pady=1)
                 self.out_features_entry.grid(row=1, column=1, sticky=W, pady=1)
 
+            case 'Conv2d':
+
+                for row in range(6):
+                    for col in range(4):
+                        self.outer_layer_frame.rowconfigure(index=row, weight=1)
+                        self.outer_layer_frame.columnconfigure(index=col, weight=1)
+
+                # in_features, out_features labels
+                self.text_in_channels = ttk.Label(self.outer_layer_frame, text='IN')
+                self.text_out_channels = ttk.Label(self.outer_layer_frame, text='OUT')
+                self.text_kernel_size = ttk.Label(self.outer_layer_frame, text='kernel size')
+                self.text_stride = ttk.Label(self.outer_layer_frame, text='stride')
+
+                # in_features, out_features entries
+                self.in_channels_entry = ttk.Entry(self.outer_layer_frame, width=4)
+                self.out_channels_entry = ttk.Entry(self.outer_layer_frame, width=4)
+                self.kernel_size_entry = ttk.Entry(self.outer_layer_frame, width=4)
+                self.stride_entry = ttk.Entry(self.outer_layer_frame, width=4)
+
+                # param labels pack
+                self.text_in_channels.grid(row=0, column=0, sticky=W, pady=1)
+                self.text_out_channels.grid(row=1, column=0, sticky=W, pady=1)
+                self.text_kernel_size.grid(row=2, column=0, sticky=W, pady=1)
+                self.text_stride.grid(row=3, column=0, sticky=W, pady=1)
+
+                # param entries pack
+                self.in_channels_entry.grid(row=0, column=1, sticky=W, pady=1)
+                self.out_channels_entry.grid(row=1, column=1, sticky=W, pady=1)
+                self.kernel_size_entry.grid(row=2, column=1, sticky=W, pady=1)
+                self.stride_entry.grid(row=3, column=1, sticky=W, pady=1)
     def pack_widget(self, col):
         """
         Располагает виджет слоя в сетке слоев
