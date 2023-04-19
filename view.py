@@ -1,6 +1,7 @@
+import sv_ttk
+
 from tkinter import *
 from tkinter import ttk
-import sv_ttk
 
 
 class View(Tk):
@@ -29,8 +30,8 @@ class View(Tk):
         style = ttk.Style()
         style.layout("Tab",
                      [('Notebook.tab', {'sticky': 'nswe', 'children':
-                      [('Notebook.padding', {'side': 'top', 'sticky': 'nswe', 'children':
-                       [('Notebook.label', {'side': 'top', 'sticky': ''})],
+                         [('Notebook.padding', {'side': 'top', 'sticky': 'nswe', 'children':
+                             [('Notebook.label', {'side': 'top', 'sticky': ''})],
                                                 })],
                                         })]
                      )
@@ -64,9 +65,9 @@ class NetworkView(ttk.Frame):
         self.controller = controller
 
         # установка верхнего фрейма для кнопок-слоев
-        self.layers_buttons_frame = ttk.Frame(self, height=60, padding=[8, 8], border=1, relief=RAISED)
-        self.layers_buttons_frame.pack(anchor=N, fill=X)
-        self.layers_buttons_frame.pack_propagate(False)
+        self.layers_buttons_frame = ttk.Frame(self, height=100, padding=[8, 15], border=1, relief=RAISED)
+        self.layers_buttons_frame.pack(anchor=NW)
+        self._make_grid_for_top_buttons_frame()
 
         # отрисовка кнопок-слоев в верхнем фрейме
         self._make_add_linear_button()
@@ -74,7 +75,7 @@ class NetworkView(ttk.Frame):
         self._make_add_conv2d_button()
 
         # установка фрейма для слоев
-        self.layers_frame = ttk.Frame(self, height=200, width=200, border=1, relief=RAISED)
+        self.layers_frame = ttk.Frame(self, height=200)
         self.layers_frame.pack(anchor=N, padx=20, pady=200)
 
         # сетка для слоев
@@ -98,26 +99,33 @@ class NetworkView(ttk.Frame):
 
         new_layer = LayerWidgetView(master=self.layers_frame, name_layer=str(name_layer))
 
-        self.controller.add_layer(new_layer)    # благодаря этому можно передавать в torch параметры слоя
+        self.controller.add_layer(new_layer)  # благодаря этому можно передавать в torch параметры слоя
 
         new_layer.pack_widget(col=self.col)  # слой помещается в текущий столбец
         self.col += 1  # теперь столбцов нужно больше
         self.layers_frame.columnconfigure(index=self.col, weight=1)  # переопределяем количество столбцов
 
+    def _make_grid_for_top_buttons_frame(self):
+        for row in range(2):
+            for col in range(6):
+                self.layers_buttons_frame.rowconfigure(index=row, weight=1)
+                self.layers_buttons_frame.columnconfigure(index=col, weight=1)
+
     def _make_add_linear_button(self):
         linear_button = ttk.Button(self.layers_buttons_frame, text='Linear',
                                    command=lambda: self.controller.print_layer('linear'))
-        linear_button.pack(side=LEFT)
+        linear_button.grid(row=0, column=0, padx=5, pady=3)
 
     def _make_add_relu_button(self):
         linear_button = ttk.Button(self.layers_buttons_frame, text='ReLU',
                                    command=lambda: self.controller.print_layer('relu'))
-        linear_button.pack(side=LEFT, padx=5)
+        linear_button.grid(row=0, column=1, padx=5, pady=3)
 
     def _make_add_conv2d_button(self):
         conv2d_button = ttk.Button(self.layers_buttons_frame, text='Conv2d',
                                    command=lambda: self.controller.print_layer('Conv2d'))
-        conv2d_button.pack(side=LEFT, padx=5)
+        conv2d_button.grid(row=0, column=2, padx=5, pady=3)
+        # todo доделать сонв по всем параметрам
 
     def _make_save_model_button(self):
         save_model_button = ttk.Button(self.save_model_button_frame, text='SAVE',
@@ -132,7 +140,6 @@ class NetworkView(ttk.Frame):
     # в layers написать функцию
 
     # todo решить проблему с непропорциональностью отображения параметров в слое
-
 
 
 class DataView(ttk.Frame):
@@ -179,13 +186,19 @@ class LayerWidgetView:
         self.main_layer_frame = ttk.Frame(master, width=150, height=260)
 
         # все параметры и кнопки(внутрення рамка, все кнопки кроме параметров in_features и out_features)
-        self.inner_layer_frame = ttk.Frame(self.main_layer_frame, relief=RAISED, border=1, width=150, height=170)
+        self.inner_layer_frame = ttk.Frame(self.main_layer_frame, height=170, border=1, relief=RAISED)
 
         # фрейм для отрисовки параметров конкретного слоя
-        self.outer_layer_frame = ttk.Frame(self.main_layer_frame, width=150, height=170)
+        self.outer_layer_frame = ttk.Frame(self.main_layer_frame, height=170)
+
+        # фрейм для надписи и кнопки удаления
+        self.label_frame = ttk.Frame(self.inner_layer_frame, height=30)
 
         # виджет-надпись отображает имя слоя
-        self.text_layer = ttk.Label(self.inner_layer_frame, relief=RAISED, text=name_layer, background='gray90')
+        self.text_layer = ttk.Label(self.label_frame, relief=RAISED, text=name_layer, background='gray90', padding=7)
+
+        # кнопка для удаления слоя
+        self.delete_button = ttk.Button(self.label_frame, text='del', width=2)
 
     def _make_layers_features(self):
         """
@@ -253,13 +266,16 @@ class LayerWidgetView:
         # упаковка фреймов
         self.main_layer_frame.grid(row=0, column=col, padx=20)
         self.main_layer_frame.pack_propagate(False)
-        self.inner_layer_frame.pack(fill=X, pady=5)
+        self.inner_layer_frame.pack(fill=X)
         self.inner_layer_frame.pack_propagate(False)
         self.outer_layer_frame.pack(fill=X)
-        # self.outer_layer_frame.pack_propagate(False)
+        self.outer_layer_frame.pack_propagate(False)
 
         # inner pack
-        self.text_layer.pack(fill=X, padx=1, pady=1)
+        self.label_frame.pack(fill=X)
+        self.label_frame.pack_propagate(False)
+        self.text_layer.pack(side=LEFT, fill=X)
+        self.delete_button.pack(side=RIGHT)
 
         # outer pack
         self._make_layers_features()
@@ -274,4 +290,3 @@ class LayerWidgetView:
 
             case 'relu':
                 return None
-
