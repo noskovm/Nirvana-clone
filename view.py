@@ -97,7 +97,7 @@ class NetworkView(ttk.Frame):
         Здесь сохраняем представление слоя в модели, чтобы потом можно было брать метаинфу(параметры, например)
         """
 
-        new_layer = LayerWidgetView(master=self.layers_frame, name_layer=str(name_layer))
+        new_layer = LayerWidgetView(master=self.layers_frame, name_layer=str(name_layer), controller=self.controller)
 
         self.controller.add_layer(new_layer)  # благодаря этому можно передавать в torch параметры слоя
 
@@ -177,10 +177,11 @@ class LayerWidgetView:
     Графическое отображение виджета для любого слоя в виде рамки на главном окне
     """
 
-    def __init__(self, master, name_layer):
+    def __init__(self, master, name_layer, controller):
         super().__init__()
         # понадобится для определения какие параметры слоя показывать
         self.name_layer = name_layer
+        self.controller = controller
 
         # главная рамка
         self.main_layer_frame = ttk.Frame(master, width=150, height=260)
@@ -198,7 +199,8 @@ class LayerWidgetView:
         self.text_layer = ttk.Label(self.label_frame, relief=RAISED, text=name_layer, background='gray90', padding=7)
 
         # кнопка для удаления слоя
-        self.delete_button = ttk.Button(self.label_frame, text='del', width=2)
+        self.delete_button = ttk.Button(self.label_frame, text='del', width=2,
+                                        command=lambda: self.controller.delete_layer(self))
 
     def _make_layers_features(self):
         """
@@ -290,3 +292,6 @@ class LayerWidgetView:
 
             case 'relu':
                 return None
+
+    def destroy_widget(self):
+        self.main_layer_frame.destroy()

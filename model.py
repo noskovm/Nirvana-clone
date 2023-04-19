@@ -24,6 +24,7 @@ class Model:
         """
         # словарь соответсвия между name_layer и таким же слоем из pytorch
         self.layers_list.append(name_layer)
+        print(f'сейчас находятся {self.layers_list}')
 
     def save_model(self):
         """
@@ -48,3 +49,6 @@ class Model:
 
         for name, param in self.neural_network.named_parameters():
             print(name, param.shape)
+
+    def delete_layer(self, layer):
+        self.layers_list.remove(layer)

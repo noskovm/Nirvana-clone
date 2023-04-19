@@ -25,6 +25,14 @@ class Controller:
 
         self.model.add_layer(layer_meta_view)
 
+    def delete_layer(self, layer):
+        """
+        :param layer: Представление слоя, которое нужно удалить
+        Сначала по представлению(по его месту в памяти оно удаляется из списка слоев в модели, а потом на стороне view
+        """
+        self.model.delete_layer(layer)
+        layer.destroy_widget()
+
     def save_model(self):
         self.model.save_model()
 
