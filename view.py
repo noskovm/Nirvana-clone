@@ -18,7 +18,7 @@ class View(Tk):
         # конфигурация окна
         sv_ttk.set_theme("light")
         self.title('Главная рабочая область')
-        self.geometry('1800x900')
+        self.state('zoomed')
 
         # инициализация и упаковка вкладок
         self.tub = ttk.Notebook(self)
@@ -175,7 +175,7 @@ class LayerWidgetView:
         self.name_layer = name_layer
 
         # главная рамка
-        self.main_layer_frame = ttk.Frame(master, width=150, height=235)
+        self.main_layer_frame = ttk.Frame(master, width=150, height=260)
 
         # все параметры и кнопки(внутрення рамка, все кнопки кроме параметров in_features и out_features)
         self.inner_layer_frame = ttk.Frame(self.main_layer_frame, relief=RAISED, border=1, width=150, height=170)
@@ -196,7 +196,7 @@ class LayerWidgetView:
             case 'linear':
 
                 # создаем сетку 4x4(так просто красивее выглядит) для размещения двух параметров в фрейме
-                for row in range(4):
+                for row in range(6):
                     for col in range(4):
                         self.outer_layer_frame.rowconfigure(index=row, weight=1)
                         self.outer_layer_frame.columnconfigure(index=col, weight=1)
@@ -228,25 +228,22 @@ class LayerWidgetView:
                 self.text_in_channels = ttk.Label(self.outer_layer_frame, text='IN')
                 self.text_out_channels = ttk.Label(self.outer_layer_frame, text='OUT')
                 self.text_kernel_size = ttk.Label(self.outer_layer_frame, text='kernel size')
-                self.text_stride = ttk.Label(self.outer_layer_frame, text='stride')
 
                 # in_features, out_features entries
                 self.in_channels_entry = ttk.Entry(self.outer_layer_frame, width=4)
                 self.out_channels_entry = ttk.Entry(self.outer_layer_frame, width=4)
                 self.kernel_size_entry = ttk.Entry(self.outer_layer_frame, width=4)
-                self.stride_entry = ttk.Entry(self.outer_layer_frame, width=4)
 
                 # param labels pack
                 self.text_in_channels.grid(row=0, column=0, sticky=W, pady=1)
                 self.text_out_channels.grid(row=1, column=0, sticky=W, pady=1)
                 self.text_kernel_size.grid(row=2, column=0, sticky=W, pady=1)
-                self.text_stride.grid(row=3, column=0, sticky=W, pady=1)
 
                 # param entries pack
                 self.in_channels_entry.grid(row=0, column=1, sticky=W, pady=1)
                 self.out_channels_entry.grid(row=1, column=1, sticky=W, pady=1)
                 self.kernel_size_entry.grid(row=2, column=1, sticky=W, pady=1)
-                self.stride_entry.grid(row=3, column=1, sticky=W, pady=1)
+
     def pack_widget(self, col):
         """
         Располагает виджет слоя в сетке слоев
@@ -258,7 +255,7 @@ class LayerWidgetView:
         self.inner_layer_frame.pack(fill=X, pady=5)
         self.inner_layer_frame.pack_propagate(False)
         self.outer_layer_frame.pack(fill=X)
-        self.outer_layer_frame.pack_propagate(False)
+        # self.outer_layer_frame.pack_propagate(False)
 
         # inner pack
         self.text_layer.pack(fill=X, padx=1, pady=1)
