@@ -30,8 +30,8 @@ class View(Tk):
         style = ttk.Style()
         style.layout("Tab",
                      [('Notebook.tab', {'sticky': 'nswe', 'children':
-                         [('Notebook.padding', {'side': 'top', 'sticky': 'nswe', 'children':
-                             [('Notebook.label', {'side': 'top', 'sticky': ''})],
+                      [('Notebook.padding', {'side': 'top', 'sticky': 'nswe', 'children':
+                       [('Notebook.label', {'side': 'top', 'sticky': ''})],
                                                 })],
                                         })]
                      )
@@ -199,7 +199,8 @@ class LayerWidgetView:
         self.text_layer = ttk.Label(self.label_frame, relief=RAISED, text=name_layer, background='gray90', padding=7)
 
         # кнопка для удаления слоя
-        self.delete_button = ttk.Button(self.label_frame, text='del', width=2,
+        self.delete_button_icon = PhotoImage(file='./icons/delete.png')
+        self.delete_button = ttk.Button(self.label_frame, width=2, image=self.delete_button_icon,
                                         command=lambda: self.controller.delete_layer(self))
 
     def _make_layers_features(self):
@@ -283,6 +284,10 @@ class LayerWidgetView:
         self._make_layers_features()
 
     def get_all_parameters(self, name_layer):
+        """
+        :param name_layer: по имени слоя передает необходимой словарь параметров
+        :return: словарь параметров для слоя
+        """
         match name_layer:
             case 'linear':
                 parameters = dict()
@@ -294,4 +299,8 @@ class LayerWidgetView:
                 return None
 
     def destroy_widget(self):
+        """
+        Удаляет self из представления
+        :return:
+        """
         self.main_layer_frame.destroy()
