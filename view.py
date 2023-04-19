@@ -18,6 +18,7 @@ class View(Tk):
         # конфигурация окна
         sv_ttk.set_theme("light")
         self.title('Главная рабочая область')
+        self.geometry('1820x980')
         self.state('zoomed')
 
         # инициализация и упаковка вкладок
@@ -63,7 +64,7 @@ class NetworkView(ttk.Frame):
         self.controller = controller
 
         # установка верхнего фрейма для кнопок-слоев
-        self.layers_buttons_frame = ttk.Frame(self, height=60, padding=[8, 8])
+        self.layers_buttons_frame = ttk.Frame(self, height=60, padding=[8, 8], border=1, relief=RAISED)
         self.layers_buttons_frame.pack(anchor=N, fill=X)
         self.layers_buttons_frame.pack_propagate(False)
 
@@ -73,8 +74,8 @@ class NetworkView(ttk.Frame):
         self._make_add_conv2d_button()
 
         # установка фрейма для слоев
-        self.layers_frame = ttk.Frame(self, height=200, width=200)
-        self.layers_frame.pack(anchor=N, padx=20, pady=100)
+        self.layers_frame = ttk.Frame(self, height=200, width=200, border=1, relief=RAISED)
+        self.layers_frame.pack(anchor=N, padx=20, pady=200)
 
         # сетка для слоев
         self.row = 0
