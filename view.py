@@ -30,8 +30,8 @@ class View(Tk):
         style = ttk.Style()
         style.layout("Tab",
                      [('Notebook.tab', {'sticky': 'nswe', 'children':
-                      [('Notebook.padding', {'side': 'top', 'sticky': 'nswe', 'children':
-                       [('Notebook.label', {'side': 'top', 'sticky': ''})],
+                         [('Notebook.padding', {'side': 'top', 'sticky': 'nswe', 'children':
+                             [('Notebook.label', {'side': 'top', 'sticky': ''})],
                                                 })],
                                         })]
                      )
@@ -113,12 +113,12 @@ class NetworkView(ttk.Frame):
 
     def _make_add_linear_button(self):
         linear_button = ttk.Button(self.layers_buttons_frame, text='Linear',
-                                   command=lambda: self.controller.print_layer('linear'))
+                                   command=lambda: self.controller.print_layer('Linear'))
         linear_button.grid(row=0, column=0, padx=5, pady=3)
 
     def _make_add_relu_button(self):
         linear_button = ttk.Button(self.layers_buttons_frame, text='ReLU',
-                                   command=lambda: self.controller.print_layer('relu'))
+                                   command=lambda: self.controller.print_layer('ReLU'))
         linear_button.grid(row=0, column=1, padx=5, pady=3)
 
     def _make_add_conv2d_button(self):
@@ -133,7 +133,7 @@ class NetworkView(ttk.Frame):
         save_model_button.pack(anchor=E)
 
     # todo для каждой кнопки
-    # сделать функцию отрисовки make
+    # сделать функцию отрисовки make !
     # в layer_widget сделать _make_features
     # в layer_widget сделать get_all_parameters
     # в model прописать в словарь
@@ -193,15 +193,17 @@ class LayerWidgetView:
         self.outer_layer_frame = ttk.Frame(self.main_layer_frame, height=170)
 
         # фрейм для надписи и кнопки удаления
-        self.label_frame = ttk.Frame(self.inner_layer_frame, height=30)
+        self.label_frame = Frame(self.inner_layer_frame, height=30, background='gray90')
 
         # виджет-надпись отображает имя слоя
-        self.text_layer = ttk.Label(self.label_frame, relief=RAISED, text=name_layer, background='gray90', padding=7)
+        self.text_layer = ttk.Label(self.label_frame, relief=RAISED, text=name_layer, justify=LEFT, background='gray90',
+                                    padding=[5, 0, 0, 0])
 
         # кнопка для удаления слоя
         self.delete_button_icon = PhotoImage(file='./icons/delete.png')
-        self.delete_button = ttk.Button(self.label_frame, width=2, image=self.delete_button_icon,
-                                        command=lambda: self.controller.delete_layer(self))
+        self.delete_button = Button(self.label_frame, width=30, image=self.delete_button_icon, padx=10,
+                                    borderwidth=0, background='gray90',
+                                    command=lambda: self.controller.delete_layer(self))
 
     def _make_layers_features(self):
         """
@@ -210,7 +212,7 @@ class LayerWidgetView:
         """
 
         match self.name_layer:
-            case 'linear':
+            case 'Linear':
 
                 # создаем сетку 4x4(так просто красивее выглядит) для размещения двух параметров в фрейме
                 for row in range(6):
@@ -236,30 +238,35 @@ class LayerWidgetView:
 
             case 'Conv2d':
 
-                for row in range(6):
-                    for col in range(4):
-                        self.outer_layer_frame.rowconfigure(index=row, weight=1)
-                        self.outer_layer_frame.columnconfigure(index=col, weight=1)
-
                 # in_features, out_features labels
-                self.text_in_channels = ttk.Label(self.outer_layer_frame, text='IN')
-                self.text_out_channels = ttk.Label(self.outer_layer_frame, text='OUT')
-                self.text_kernel_size = ttk.Label(self.outer_layer_frame, text='kernel size')
+                self.text_in_channels = ttk.Label(self.outer_layer_frame, text='in_channels', foreground='gray',
+                                                  font='Segoe 10')
+                self.text_out_channels = ttk.Label(self.outer_layer_frame, text='out_channels', foreground='gray',
+                                                   font='Segoe 10')
+                self.text_kernel_size = ttk.Label(self.outer_layer_frame, text='kernel_size', foreground='gray',
+                                                  font='Segoe 10')
+                self.text_stride = ttk.Label(self.outer_layer_frame, text='stride', foreground='gray',
+                                             font='Segoe 10')
 
                 # in_features, out_features entries
                 self.in_channels_entry = ttk.Entry(self.outer_layer_frame, width=4)
                 self.out_channels_entry = ttk.Entry(self.outer_layer_frame, width=4)
                 self.kernel_size_entry = ttk.Entry(self.outer_layer_frame, width=4)
+                self.stride_entry = ttk.Entry(self.outer_layer_frame, width=4)
 
                 # param labels pack
-                self.text_in_channels.grid(row=0, column=0, sticky=W, pady=1)
-                self.text_out_channels.grid(row=1, column=0, sticky=W, pady=1)
-                self.text_kernel_size.grid(row=2, column=0, sticky=W, pady=1)
+                self.text_in_channels.pack(side=TOP, anchor=NW)
+                self.in_channels_entry.pack(side=TOP, anchor=NW, pady=(2, 5))
 
+                self.text_out_channels.pack(side=TOP, anchor=NW)
+                self.out_channels_entry.pack(side=TOP, anchor=NW, pady=(2, 5))
+
+                self.text_kernel_size.pack(side=TOP, anchor=NW)
+                self.kernel_size_entry.pack(side=TOP, anchor=NW, pady=(2, 5))
+
+                self.text_stride.pack(side=TOP, anchor=NW)
+                self.stride_entry.pack(side=TOP, anchor=NW, pady=(2, 0))
                 # param entries pack
-                self.in_channels_entry.grid(row=0, column=1, sticky=W, pady=1)
-                self.out_channels_entry.grid(row=1, column=1, sticky=W, pady=1)
-                self.kernel_size_entry.grid(row=2, column=1, sticky=W, pady=1)
 
     def pack_widget(self, col):
         """
@@ -271,14 +278,14 @@ class LayerWidgetView:
         self.main_layer_frame.pack_propagate(False)
         self.inner_layer_frame.pack(fill=X)
         self.inner_layer_frame.pack_propagate(False)
-        self.outer_layer_frame.pack(fill=X)
-        self.outer_layer_frame.pack_propagate(False)
+        self.outer_layer_frame.pack(fill=BOTH, pady=5)
+        # self.outer_layer_frame.pack_propagate(False)
 
         # inner pack
         self.label_frame.pack(fill=X)
         self.label_frame.pack_propagate(False)
-        self.text_layer.pack(side=LEFT, fill=X)
-        self.delete_button.pack(side=RIGHT)
+        self.text_layer.pack(side=LEFT, fill=BOTH)
+        self.delete_button.pack(side=RIGHT, fill=Y)
 
         # outer pack
         self._make_layers_features()
@@ -289,13 +296,13 @@ class LayerWidgetView:
         :return: словарь параметров для слоя
         """
         match name_layer:
-            case 'linear':
+            case 'Linear':
                 parameters = dict()
                 parameters['in_features'] = int(self.in_features_entry.get())
                 parameters['out_features'] = int(self.out_features_entry.get())
                 return parameters
 
-            case 'relu':
+            case 'ReLU':
                 return None
 
     def destroy_widget(self):

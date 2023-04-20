@@ -14,8 +14,8 @@ class Model:
 
         self.layers_list = []
         self.neural_network = nn.Sequential()
-        self.layers_link = {'linear': make_linear_layer,
-                            'relu': make_relu_layer}
+        self.layers_link = {'Linear': make_linear_layer,
+                            'ReLU': make_relu_layer}
 
     def add_layer(self, name_layer):
         """
