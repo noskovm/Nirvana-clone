@@ -11,7 +11,7 @@ class Model:
         """
         layers_list хранит в себе представления слоев
         """
-
+        self.data = None
         self.layers_list = []
         self.neural_network = nn.Sequential()
         self.layers_link = {'Linear': make_linear_layer,
@@ -52,3 +52,8 @@ class Model:
 
     def delete_layer(self, layer):
         self.layers_list.remove(layer)
+
+    def save_data(self, path):
+        # todo сделать сохрание файла dataloader'ом
+        for line in self.data:
+            print(line)

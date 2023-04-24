@@ -1,5 +1,6 @@
 from model import Model
 from view import View
+from tkinter import filedialog as fd
 
 
 class Controller:
@@ -36,10 +37,24 @@ class Controller:
     def save_model(self):
         self.model.save_model()
 
+    # _____DATA_________________________________________________
+    def add_data(self):
+        filetypes = (
+            ('All files', '*.*')
+        )
+
+        path = fd.askopenfilename(
+            title='Open a file',
+            initialdir='/')
+
+        if path != "":
+            self.model.save_data(path)
+
     def main(self):
         self.view.main()  # отображаем главное окно
 
 
 if __name__ == '__main__':
     controller = Controller()
+
     controller.main()

@@ -1,5 +1,4 @@
 import sv_ttk
-
 from tkinter import *
 from tkinter import ttk
 
@@ -36,7 +35,7 @@ class View(Tk):
                                         })]
                      )
 
-        self.data_view = DataView(master=self.tub)
+        self.data_view = DataView(master=self.tub, controller=self.controller)
         self.network_view = NetworkView(master=self.tub, controller=self.controller)
         self.hyper_view = HyperView(master=self.tub)
         self.validation_view = ValidationView(master=self.tub)
@@ -60,7 +59,7 @@ class NetworkView(ttk.Frame):
     Вкладка построения графа вычислений(нейронной сети).
     """
 
-    def __init__(self, master, controller):
+    def __init__(self, controller, master=None):
         super().__init__()
         self.controller = controller
 
@@ -147,9 +146,11 @@ class DataView(ttk.Frame):
     Вкладка загрузки данных.
     """
 
-    def __init__(self, master):
-        super().__init__()
-        pass
+    def __init__(self, controller, master=None):
+        super().__init__(master)
+        self.controller = controller
+        self.add_file_button = ttk.Button(text='+', command=self.controller.add_data)
+        self.add_file_button.pack()
 
 
 class HyperView(ttk.Frame):
@@ -157,7 +158,7 @@ class HyperView(ttk.Frame):
     Вкладка подбора гиперпараметров.
     """
 
-    def __init__(self, master):
+    def __init__(self, master=None):
         super().__init__()
         pass
 
