@@ -1,5 +1,7 @@
-from layers import *
 import torch.nn as nn
+from torchvision.datasets import MNIST
+from layers import *
+from torch.utils.data import DataLoader
 
 
 class Model:
@@ -16,6 +18,11 @@ class Model:
         self.neural_network = nn.Sequential()
         self.layers_link = {'Linear': make_linear_layer,
                             'ReLU': make_relu_layer}
+        self.datasets = ['CIFAR10', 'MNIST']
+        # self.MNIST = getattr(torchvision.datasets, 'MNIST')
+        #
+        # self.dataset_hmap = {'MNIST': self.MNIST}
+        self.choose_dataset = None
 
     def add_layer(self, name_layer):
         """
@@ -53,7 +60,12 @@ class Model:
     def delete_layer(self, layer):
         self.layers_list.remove(layer)
 
-    def save_data(self, path):
-        # todo сделать сохрание файла dataloader'ом
-        for line in self.data:
-            print(line)
+    def get_datasets(self):
+        return self.datasets
+
+    def set_dataset(self, dataset_name):
+        self.choose_dataset = dataset_name
+        print(f'Выбран датасет - {self.MNIST}')
+        return True
+
+

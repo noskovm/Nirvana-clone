@@ -2,7 +2,6 @@ import sv_ttk
 from tkinter import *
 from tkinter import ttk
 
-
 class View(Tk):
     """
     Представление. Содержит 4 вкладки для разных этапов задачи
@@ -27,13 +26,16 @@ class View(Tk):
 
         # некоторые беды со стилем(чтобы убрать пунктир)
         style = ttk.Style()
-        style.layout("Tab",
+        style.layout('Tab',
                      [('Notebook.tab', {'sticky': 'nswe', 'children':
                          [('Notebook.padding', {'side': 'top', 'sticky': 'nswe', 'children':
                              [('Notebook.label', {'side': 'top', 'sticky': ''})],
                                                 })],
                                         })]
                      )
+        # высота строки в таблице
+        style.configure('Treeview', rowheight=170)
+        style.configure('TNotebook.Tab', font=('Ubuntu', '15'))
 
         self.data_view = DataView(master=self.tub, controller=self.controller)
         self.network_view = NetworkView(master=self.tub, controller=self.controller)
@@ -149,9 +151,49 @@ class DataView(ttk.Frame):
     def __init__(self, controller, master=None):
         super().__init__(master)
         self.controller = controller
-        self.add_file_button = ttk.Button(text='+', command=self.controller.add_data)
-        self.add_file_button.pack()
+        self.datasets = controller.get_datasets()
 
+        # фрейм выбора датасета
+        self.dataset_list_frame = ttk.Frame(self, width=500, border=1, relief=RAISED)
+        self.dataset_list_label = ttk.Label(self.dataset_list_frame, text='Public Datasets', justify='left', font='Ubuntu 16')
+
+        # окно с выбранным датасетом
+        self.dataset_choose_frame = ttk.Frame(self, height=80, border=1, relief=RAISED)
+        self.selected_set_lab = ttk.Label(self.dataset_choose_frame, text='Choose Dataset', justify='left', font='Ubuntu 16')
+
+        # окно с настройками даталоадера
+        self.dataloader_pref_frame = ttk.Frame(self, border=1, relief=RAISED)
+        self.dataloader_pref_lab = ttk.Label(self.dataloader_pref_frame, text='Dataloader Preferences', justify='left',
+                                      font='Ubuntu 16')
+
+        # таблица с доступными датасетами
+        self.dataset_list = ttk.Treeview(self.dataset_list_frame, show='tree', columns=('icon', 'data_name'))
+        self.img_cifar = PhotoImage(file='icons/cifar10.png')
+        self.img_mnist = PhotoImage(file='icons/mnist.png')
+        images = [self.img_cifar, self.img_mnist]
+        for idx, dataset in enumerate(self.datasets):
+            self.dataset_list.insert('', 'end', image=images[idx], values=dataset)
+
+        # обработка нажатий
+        self.dataset_list.bind("<Double-1>", self.print_specific_dataset)
+
+        self.dataset_list_frame.pack(fill=Y, padx=5, pady=10, side=LEFT)
+        self.dataset_list_frame.pack_propagate(False)
+        self.dataset_choose_frame.pack(fill=X, padx=5, pady=10, side=TOP, expand=True, anchor=NW)
+        self.dataset_choose_frame.pack_propagate(False)
+        self.dataloader_pref_frame.pack(fill=BOTH, padx=5, pady=10, expand=True, anchor=NW)
+        self.dataloader_pref_frame.pack_propagate(False)
+
+        self.dataset_list_label.pack()
+        self.selected_set_lab.pack()
+        self.dataloader_pref_lab.pack()
+
+        self.dataset_list.pack(expand=True)
+
+    def print_specific_dataset(self, event):
+        selected_idx = int(self.dataset_list.selection()[0].strip()[-1]) - 1
+        self.selected_set_lab.configure(text=f'Choose Dataset: {self.datasets[selected_idx]}')
+        self.controller.set_dataset(dataset_name=self.datasets[selected_idx])
 
 class HyperView(ttk.Frame):
     """

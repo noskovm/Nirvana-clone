@@ -1,5 +1,6 @@
 from model import Model
 from view import View
+from view import DataView
 from tkinter import filedialog as fd
 
 
@@ -11,6 +12,7 @@ class Controller:
     def __init__(self):
         self.model = Model()
         self.view = View(self)
+        self.data_view = DataView(self)
 
     def print_layer(self, name_layer):
         """
@@ -38,17 +40,11 @@ class Controller:
         self.model.save_model()
 
     # _____DATA_________________________________________________
-    def add_data(self):
-        filetypes = (
-            ('All files', '*.*')
-        )
+    def get_datasets(self):
+        return self.model.get_datasets()
 
-        path = fd.askopenfilename(
-            title='Open a file',
-            initialdir='/')
-
-        if path != "":
-            self.model.save_data(path)
+    def set_dataset(self, dataset_name):
+        self.model.set_dataset(dataset_name)
 
     def main(self):
         self.view.main()  # отображаем главное окно
