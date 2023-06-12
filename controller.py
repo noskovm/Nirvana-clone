@@ -46,6 +46,9 @@ class Controller:
     def set_dataset(self, dataset_name):
         self.model.set_dataset(dataset_name)
 
+    def start_model(self):
+        self.model.start()
+
     def main(self):
         self.view.main()  # отображаем главное окно
 

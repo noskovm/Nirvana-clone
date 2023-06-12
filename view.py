@@ -194,6 +194,7 @@ class DataView(ttk.Frame):
         selected_idx = int(self.dataset_list.selection()[0].strip()[-1]) - 1
         self.selected_set_lab.configure(text=f'Choose Dataset: {self.datasets[selected_idx]}')
         self.controller.set_dataset(dataset_name=self.datasets[selected_idx])
+        self.controller.start_model()
 
 class HyperView(ttk.Frame):
     """
